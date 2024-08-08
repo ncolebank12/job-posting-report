@@ -1,0 +1,10 @@
+{
+    "manifest_version": 3,
+    "name": "Job Posting Report",
+    "description": "Report job postings that seem fraudulent.",
+    "version": "1.0",
+    "action": {
+      "default_popup": "index.html",
+      "default_icon": "vite.svg"
+    }
+  }
