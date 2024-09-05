@@ -1,4 +1,5 @@
 import { Field, Form, Formik } from "formik";
+import { reportFraudulent } from "../utils/scripts";
 
 const ReportForm = () => {
     return (
@@ -8,6 +9,7 @@ const ReportForm = () => {
         }}
         onSubmit={async (values) => {
             const isFakeListing = values.picked === 'fakeListing';
+            reportFraudulent(isFakeListing, values.comment);
         }}>
             {({ values }) => (
                 <Form>
