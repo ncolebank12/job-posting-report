@@ -1,4 +1,4 @@
-import { doc, updateDoc, increment, arrayUnion, setDoc } from "firebase/firestore";
+import { doc, updateDoc, increment, arrayUnion, setDoc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
 
 chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }) => {
@@ -11,8 +11,10 @@ chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }) => {
             if (activeUrl?.includes('linkedin')) {
                 const postId = activeUrl.match(/currentJobId=(.*?)&/);
                 if (postId) {   
-                    const docRef = doc(db, "LinkedInPostings", postId[0]);
-                    if (docRef) {
+                    const docRef = doc(db, "LinkedInPostings", postId[1]);
+                    const docSnap = await getDoc(docRef)
+                    if (docSnap.exists()) {
+                        console.log(postId);
                         if (isFakeListing) {
                             await updateDoc(docRef, { fakeListingCount: increment(1)});
                         } else {
@@ -28,10 +30,10 @@ chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }) => {
                             shadyCompanyCount: 1,
                             comments: [] as string[]
                         }
-                        if (notes.length > 0) {
+                        if (notes && notes.length > 0) {
                             newListing.comments.push(notes);
                         }
-                        const docRef = doc(db, "LinkedInPostings", postId[0]);
+                        const docRef = doc(db, "LinkedInPostings", postId[1]);
                         
                         await setDoc(docRef, newListing);
                     } 
