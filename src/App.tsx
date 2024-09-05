@@ -1,5 +1,5 @@
-import './App.css'
-import ReportForm from './components/ReportForm';
+import "./App.css"
+import ReportForm from "./components/ReportForm";
 
 function App() {
   return (
@@ -8,7 +8,7 @@ function App() {
         <h1>Job Posting Report</h1>
         <h2> other people have reported this listing as fraudalent.</h2>
       </div>
-     <ReportForm /> 
+     <ReportForm/> 
     </div>
   );
 }

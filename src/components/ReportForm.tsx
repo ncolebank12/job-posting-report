@@ -3,12 +3,12 @@ import { Field, Form, Formik } from "formik";
 const ReportForm = () => {
     return (
         <Formik initialValues ={{
-            picked: '',
-            comment: ''
+            picked: "",
+            comment: ""
         }}
         onSubmit={async (values) => {
-            const isFakeListing = values.picked === 'fakeListing';
-            chrome.runtime.sendMessage({ type: 'submit-post', notes: values.comment, isFakeListing: isFakeListing })
+            const isFakeListing = values.picked === "fakeListing";
+            chrome.runtime.sendMessage({ type: "submit-post", notes: values.comment, isFakeListing: isFakeListing })
         }}>
             {() => (
                 <Form>
