@@ -22,12 +22,13 @@ chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }) => {
                         }
                         
                         if (notes.length > 0) {
+                            console.log('efefe');
                             await updateDoc(docRef, { comments: arrayUnion(notes)});
                         }
                     } else { //initialize new listing
                         const newListing = {
-                            fakeListingCount: 1,
-                            shadyCompanyCount: 1,
+                            fakeListingCount: isFakeListing ? 1 : 0,
+                            shadyCompanyCount: isFakeListing ? 0 : 1,
                             comments: [] as string[]
                         }
                         if (notes && notes.length > 0) {
