@@ -8,7 +8,7 @@ const ReportForm = () => {
         }}
         onSubmit={async (values) => {
             const isFakeListing = values.picked === 'fakeListing';
-            chrome.runtime.sendMessage({ type: 'submit-post', comment: values.comment, isFakeListing: isFakeListing })
+            chrome.runtime.sendMessage({ type: 'submit-post', notes: values.comment, isFakeListing: isFakeListing })
         }}>
             {() => (
                 <Form>
