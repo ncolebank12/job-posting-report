@@ -1,6 +1,5 @@
-import { useState } from 'react'
 import './App.css'
-import { reportFraudulent } from './utils/scripts';
+import ReportForm from './components/ReportForm';
 
 function App() {
   return (
@@ -9,7 +8,7 @@ function App() {
         <h1>Job Posting Report</h1>
         <h2> other people have reported this listing as fraudalent.</h2>
       </div>
-      <button onClick={() => reportFraudulent()}>This is a fake listing</button>
+     <ReportForm /> 
     </div>
   );
 }
