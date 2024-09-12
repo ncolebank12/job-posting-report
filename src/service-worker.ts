@@ -1,6 +1,6 @@
 import { doc, updateDoc, increment, arrayUnion, setDoc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
-import { getJobId, getJobSite } from "./utils/jobPostUtils";
+import { addUserSubmission, getJobId, getJobSite, hasPriorSubmission } from "./utils/jobPostUtils";
 import { JobSite } from "./types";
 
 chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }) => {
@@ -9,7 +9,12 @@ chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }) => {
             const jobSite = await getJobSite();
             const jobId = await getJobId();
             if (jobId && jobSite !== undefined) {
-                console.log("h")
+                const priorSubmission = await hasPriorSubmission(jobId);
+                if (priorSubmission) {
+                    //TODO: action for when user has already submitted
+                    return;
+                }
+                await addUserSubmission(jobId);
                 const docRef = doc(db, "JobPostings", jobId);
                 const docSnap = await getDoc(docRef)
                 if (docSnap.exists()) {

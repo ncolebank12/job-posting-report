@@ -1,4 +1,6 @@
+import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { JobSite } from "../types";
+import { db } from "../firebase";
 
 export async function getJobId(): Promise<string | undefined> {
     const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
@@ -40,4 +42,51 @@ export async function getJobSite(): Promise<JobSite | undefined> {
     } else {
         return undefined;
     }
+}
+
+export async function hasPriorSubmission(postId: string): Promise<boolean> {
+    let id = undefined;
+    chrome.identity.getProfileUserInfo((userInfo) => {
+        if (userInfo && !chrome.runtime.lastError) {
+            id = userInfo.id;
+        }
+    });
+    if (id === undefined) {
+        return false;
+    }
+    const docRef = doc(db, "UserSubmissions", id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        const ids = docSnap.get("postIds") as string[];
+        if (ids.includes(postId)) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+export async function addUserSubmission(postId: string): Promise<boolean> {
+    let id = undefined;
+    chrome.identity.getProfileUserInfo((userInfo) => {
+        if (userInfo && !chrome.runtime.lastError) {
+            id = userInfo.id;
+        }
+    });
+    if (id === undefined) {
+        return false;
+    }
+    const docRef = doc(db, "UserSubmissions", id);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        updateDoc(docRef, { postIds: arrayUnion(postId)});
+    } else {
+        const newUser = {
+            postIds: [postId]
+        }
+        await setDoc(docRef, newUser);
+    }
+    return true;
 }
