@@ -1,6 +1,7 @@
-import ReportForm from './components/ReportForm';
 import Home from './components/Home';
 import Comments from "./components/Comments";
+import ReportForm from "./components/ReportForm";
+import Layout from "./components/Layout";
 import {
     MemoryRouter,
     Routes,
@@ -11,9 +12,11 @@ function App() {
     return (
         <MemoryRouter>
             <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/comments" element={<Comments />} />
-                <Route path="/report" element={<ReportForm />} />
+                <Route path="/" element={<Layout />}>
+                    <Route index element={<Home />} />
+                    <Route path="comments" element={<Comments />} />
+                    <Route path="report" element={<ReportForm />} />
+                </Route>
             </Routes>
         </MemoryRouter>
     );
