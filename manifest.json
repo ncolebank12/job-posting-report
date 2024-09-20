@@ -8,7 +8,8 @@
       "default_icon": "vite.svg"
     },
     "permissions": [
-      "activeTab"
+      "activeTab",
+      "identity"
     ],
     "background": {
       "service_worker": "src/service-worker.ts"
