@@ -1,6 +1,6 @@
 import { doc, updateDoc, increment, arrayUnion, setDoc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
-import { addUserSubmission, getJobId, getJobSite, hasPriorSubmission } from "./utils/jobPostUtils";
+import { getJobId, getJobSite, hasPriorSubmission } from "./utils/jobPostUtils";
 import { JobSite } from "./types";
 
 chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }) => {
@@ -9,12 +9,6 @@ chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }) => {
             const jobSite = await getJobSite();
             const jobId = await getJobId();
             if (jobId && jobSite !== undefined) {
-                const priorSubmission = await hasPriorSubmission(jobId);
-                if (priorSubmission) {
-                    //TODO: action for when user has already submitted
-                    return;
-                }
-                await addUserSubmission(jobId);
                 const docRef = doc(db, "JobPostings", jobId);
                 const docSnap = await getDoc(docRef)
                 if (docSnap.exists()) {
@@ -41,9 +35,27 @@ chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }) => {
                     console.log(docRef);
                     
                     await setDoc(docRef, newListing);
+                }
+            }
+        }
+        submit();
+    }
+});
+
+chrome.tabs.onUpdated.addListener((_tabId, changeInfo, _tab) => {
+    const type = "submit-status";
+    const checkSubmission = async () => {
+        if (changeInfo.url) {
+            const jobId = await getJobId();
+            if (jobId === undefined) {
+                //not valid, user can't submit
+                chrome.runtime.sendMessage({ type: type, disabled: true })
+            } else {
+                const hasSubmitted = await hasPriorSubmission(jobId);
+                chrome.runtime.sendMessage({ type: type, disabled: hasSubmitted })
+
             }
         }
     }
-    submit();
-    }
+    checkSubmission();
 });
