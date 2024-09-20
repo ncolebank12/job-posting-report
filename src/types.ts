@@ -3,3 +3,10 @@ export enum JobSite {
     Indeed,
     Glassdoor
 }
+
+export type JobPostData = {
+    comments: string[],
+    fakeListingCount: number,
+    shadyCompanyCount: number,
+    company: string
+}
