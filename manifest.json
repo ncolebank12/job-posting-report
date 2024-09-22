@@ -9,7 +9,8 @@
     },
     "permissions": [
       "activeTab",
-      "identity"
+      "identity",
+      "tabs"
     ],
     "background": {
       "service_worker": "src/service-worker.ts"

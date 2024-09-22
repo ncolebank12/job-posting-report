@@ -90,3 +90,16 @@ export async function addUserSubmission(postId: string): Promise<boolean> {
     }
     return true;
 }
+
+export async function checkSubmission() {
+    const type = "submit-status";
+    const jobId = await getJobId();
+    if (jobId === undefined) {
+        //not valid, user can't submit
+        chrome.runtime.sendMessage({ type: type, disabled: true })
+    } else {
+        const hasSubmitted = await hasPriorSubmission(jobId);
+        chrome.runtime.sendMessage({ type: type, disabled: hasSubmitted })
+
+    }
+}

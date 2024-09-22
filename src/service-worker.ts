@@ -1,6 +1,6 @@
 import { doc, updateDoc, increment, arrayUnion, setDoc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
-import { getJobId, getJobSite, hasPriorSubmission } from "./utils/jobPostUtils";
+import { checkSubmission, getJobId, getJobSite } from "./utils/jobPostUtils";
 import { JobSite } from "./types";
 
 chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }) => {
@@ -43,19 +43,13 @@ chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }) => {
 });
 
 chrome.tabs.onUpdated.addListener((_tabId, changeInfo, _tab) => {
-    const type = "submit-status";
-    const checkSubmission = async () => {
-        if (changeInfo.url) {
-            const jobId = await getJobId();
-            if (jobId === undefined) {
-                //not valid, user can't submit
-                chrome.runtime.sendMessage({ type: type, disabled: true })
-            } else {
-                const hasSubmitted = await hasPriorSubmission(jobId);
-                chrome.runtime.sendMessage({ type: type, disabled: hasSubmitted })
-
-            }
-        }
+    const url = changeInfo.url;
+    if (url) {
+        checkSubmission();
     }
-    checkSubmission();
 });
+
+chrome.tabs.onActivated.addListener(() => {
+    checkSubmission();
+})
+
