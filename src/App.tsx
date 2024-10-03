@@ -1,4 +1,4 @@
-import Home from './components/Home';
+import Home from "./components/Home";
 import Comments from "./components/Comments";
 import ReportForm from "./components/ReportForm";
 import Layout from "./components/Layout";
@@ -7,23 +7,28 @@ import {
     Routes,
     Route,
 } from "react-router-dom";
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 function App() {
-    const [disabled, setDisabled] = useState(false);
+    const [isValidSite, setIsValidSite] = useState(false);
 
     useEffect(() => {
-        const messageListener = (message: { type: string, disabled: boolean }) => {
-            if (message.type === 'submit-status') {
-                setDisabled(message.disabled);
-            }
-        }
+        chrome.runtime.sendMessage({ type: 'check-valid-site'}, (response) => {
+            console.log(response);
+            setIsValidSite(response && response.isValid);
+        });
+        // const messageListener = (message: { type: string, disabled: boolean }) => {
+        //     if (message.type === "submit-status") {
+        //         setDisabled(message.disabled);
+        //     }
+        // }
 
-        chrome.runtime.onMessage.addListener(messageListener);
+        // chrome.runtime.onMessage.addListener(messageListener);
 
-        return () => {
-            chrome.runtime.onMessage.removeListener(messageListener);
-        }
+        // return () => {
+        //     console.log('unmounted');
+        //     chrome.runtime.onMessage.removeListener(messageListener);
+        // }
     }, []);
     return (
         <MemoryRouter>
@@ -31,7 +36,7 @@ function App() {
                 <Route path="/" element={<Layout />}>
                     <Route index element={<Home />} />
                     <Route path="comments" element={<Comments />} />
-                    <Route path="report" element={<ReportForm disabled={disabled}/>} />
+                    <Route path="report" element={<ReportForm disabled={!isValidSite}/>} />
                 </Route>
             </Routes>
         </MemoryRouter>

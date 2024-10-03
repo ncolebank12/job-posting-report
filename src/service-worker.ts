@@ -1,12 +1,13 @@
 import { doc, updateDoc, increment, arrayUnion, setDoc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
-import { checkSubmission, getJobId, getJobSite } from "./utils/jobPostUtils";
+import { addUserSubmission, checkValidSite, getActiveUrl, getJobId, getJobSite, } from "./utils/jobPostUtils";
 import { JobSite } from "./types";
 
-chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }) => {
+chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }, _sender, sendResponse) => {
     if (type === "submit-post") {
         const submit = async () => {
-            const jobSite = await getJobSite();
+            const activeUrl = await getActiveUrl();
+            const jobSite = await getJobSite(activeUrl);
             const jobId = await getJobId();
             if (jobId && jobSite !== undefined) {
                 const docRef = doc(db, "JobPostings", jobId);
@@ -36,20 +37,35 @@ chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }) => {
                     
                     await setDoc(docRef, newListing);
                 }
+                await addUserSubmission(jobId);
             }
         }
         submit();
+    } 
+    else if (type == "check-valid-site") {
+        // checkValidSite().then((isValid) => {
+        //     sendResponse({ isValid: isValid });
+        // });
+        console.log('message received')
+        const doSomething = async () => {
+            const isValid = await checkValidSite();
+            sendResponse({ isValid: isValid });
+
+        }
+        doSomething();
+        return true;
     }
 });
 
 chrome.tabs.onUpdated.addListener((_tabId, changeInfo, _tab) => {
     const url = changeInfo.url;
     if (url) {
-        checkSubmission();
+        chrome.action.setBadgeText({text: "10+"}); 
+        // checkValidSite();
     }
 });
 
 chrome.tabs.onActivated.addListener(() => {
-    checkSubmission();
+    // checkValidSite();
 })
 

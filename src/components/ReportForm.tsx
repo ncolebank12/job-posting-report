@@ -25,7 +25,7 @@ const ReportForm = ({ disabled }: { disabled: boolean }) => {
                         </label>
                     </div>
                     <Field name="comment"/>
-                    <button type="submit" disabled={disabled}>Submit</button>
+                    <button type="submit" disabled={disabled} >Submit</button>
                 </Form>
             )}
         </Formik>

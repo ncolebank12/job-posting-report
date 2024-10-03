@@ -10,9 +10,16 @@
     "permissions": [
       "activeTab",
       "identity",
+      "identity.email",
       "tabs"
     ],
     "background": {
       "service_worker": "src/service-worker.ts"
-    }
+    },
+    "content_scripts": [
+      {
+        "js": ["src/main.tsx"],
+        "matches": ["<all_urls>"]
+      }
+    ]
   }

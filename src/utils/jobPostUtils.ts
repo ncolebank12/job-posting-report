@@ -3,9 +3,12 @@ import { JobSite } from "../types";
 import { db } from "../firebase";
 
 export async function getJobId(): Promise<string | undefined> {
-    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-    const activeUrl = tab.url;
-    const jobSite = await getJobSite();
+    const tabs = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    if (tabs.length == 0) {
+        return undefined;
+    }
+    const activeUrl = tabs[0].url;
+    const jobSite = await getJobSite(activeUrl);
     if (!activeUrl) return undefined;
     if (jobSite == JobSite.LinkedIn) {
         const postId = activeUrl.match(/currentJobId=([a-zA-Z0-9]*)&/);
@@ -26,9 +29,13 @@ export async function getJobId(): Promise<string | undefined> {
     return undefined;
 }
 
-export async function getJobSite(): Promise<JobSite | undefined> {
-    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-    const activeUrl = tab.url;
+export async function getActiveUrl(): Promise<string | undefined> {
+    const tabs = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    const activeUrl = tabs[0].url;
+    return activeUrl;
+}
+
+export async function getJobSite(activeUrl: string | undefined): Promise<JobSite | undefined> {
     if (activeUrl) {
         if (activeUrl.includes("linkedin")) {
             return JobSite.LinkedIn;
@@ -71,10 +78,12 @@ export async function hasPriorSubmission(postId: string): Promise<boolean> {
 export async function addUserSubmission(postId: string): Promise<boolean> {
     let id = undefined;
     chrome.identity.getProfileUserInfo((userInfo) => {
+        console.log(userInfo);
         if (userInfo && !chrome.runtime.lastError) {
             id = userInfo.id;
         }
     });
+    console.log(id);
     if (id === undefined) {
         return false;
     }
@@ -91,15 +100,8 @@ export async function addUserSubmission(postId: string): Promise<boolean> {
     return true;
 }
 
-export async function checkSubmission() {
-    const type = "submit-status";
+export async function checkValidSite() {
     const jobId = await getJobId();
-    if (jobId === undefined) {
-        //not valid, user can't submit
-        chrome.runtime.sendMessage({ type: type, disabled: true })
-    } else {
-        const hasSubmitted = await hasPriorSubmission(jobId);
-        chrome.runtime.sendMessage({ type: type, disabled: hasSubmitted })
-
-    }
+    console.log(jobId);
+    return jobId === undefined ? false : !(await hasPriorSubmission(jobId));
 }
