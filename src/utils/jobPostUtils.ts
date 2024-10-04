@@ -2,8 +2,14 @@ import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { JobSite } from "../types";
 import { db } from "../firebase";
 
+/**
+ * Gets a unique id from the active tab's url
+ * @return {Promise<string | undefined>} 
+ * Job Id in the format {site}-{id}, undefined if site is not a valid job
+ */
 export async function getJobId(): Promise<string | undefined> {
-    const tabs = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    const tabs = await chrome.tabs.query({ active: true, 
+    lastFocusedWindow: true });
     if (tabs.length == 0) {
         return undefined;
     }
@@ -29,13 +35,26 @@ export async function getJobId(): Promise<string | undefined> {
     return undefined;
 }
 
+/**
+ * Gets the url of the active tab.
+ * @return {Promise<string | undefined>} url of the active tab, undefined if
+ * no url
+ */
 export async function getActiveUrl(): Promise<string | undefined> {
-    const tabs = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    const tabs = await chrome.tabs.query({ active: true,
+    lastFocusedWindow: true });
     const activeUrl = tabs[0].url;
     return activeUrl;
 }
 
-export async function getJobSite(activeUrl: string | undefined): Promise<JobSite | undefined> {
+/**
+ * Gets the job website of the given url
+ * @param activeUrl url of the tab to get the job site for
+ * @return {Promise<JobSite | undefined>} the job website (LinkedIn, 
+ * Indeed, etc.) of the given url
+ */
+export async function getJobSite(activeUrl: string | undefined): 
+Promise<JobSite | undefined> {
     if (activeUrl) {
         if (activeUrl.includes("linkedin")) {
             return JobSite.LinkedIn;
@@ -51,6 +70,11 @@ export async function getJobSite(activeUrl: string | undefined): Promise<JobSite
     }
 }
 
+/**
+ * Checks whether user has already submitted a report on job listing
+ * @param {string} postId the job posting Id to check prior submission for 
+ * @return {boolean} true if has a prior submission, false if not
+ */
 export async function hasPriorSubmission(postId: string): Promise<boolean> {
     const { id } = await getUserInfo();
     if (id === undefined) {
@@ -70,6 +94,12 @@ export async function hasPriorSubmission(postId: string): Promise<boolean> {
     }
 }
 
+/**
+ * Records submission for current user for given job posting id
+ * @param {string} postId job posting id to record user submission for
+ * @return {Promise<boolean>} true if succesfully adds submission, 
+ * false if fails
+ */
 export async function addUserSubmission(postId: string): Promise<boolean> {
     getUserInfo().then((userInfo) => {
         if (userInfo && !chrome.runtime.lastError) {
@@ -94,6 +124,11 @@ export async function addUserSubmission(postId: string): Promise<boolean> {
     return true;
 }
 
+/**
+ * gets identity info for loggged in user on chrome
+ * @return {Promise<chrome.identity.UserInfo>} a promise containing current
+ * chrome user's info (id and email)
+ */
 function getUserInfo() {
     return new Promise<chrome.identity.UserInfo>((resolve, _reject) => {
         chrome.identity.getProfileUserInfo((userInfo) => {
@@ -102,7 +137,13 @@ function getUserInfo() {
     })
 }
 
-export async function checkValidSite() {
+/**
+ * checks whether the current user can submit on the current site.
+ * Looks at if the job site is valid and if the user has already made a
+ * submission for the listing
+ * @return {Promise<boolean>} true if user can make a submission, false if not
+ */
+export async function checkCanSubmit(): Promise<boolean> {
     const jobId = await getJobId();
     console.log(jobId);
     return jobId === undefined ? false : !(await hasPriorSubmission(jobId));

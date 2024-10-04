@@ -22,6 +22,6 @@ export default tseslint.config({
       'warn',
       { allowConstantExport: true },
     ],
-    'quotes': ["warn", "double"]
+    'quotes': ["warn", "double"],
   },
 })

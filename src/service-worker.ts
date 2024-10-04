@@ -1,6 +1,6 @@
 import { doc, updateDoc, increment, arrayUnion, setDoc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
-import { addUserSubmission, checkValidSite, getActiveUrl, getJobId, getJobSite, } from "./utils/jobPostUtils";
+import { addUserSubmission, checkCanSubmit, getActiveUrl, getJobId, getJobSite, } from "./utils/jobPostUtils";
 import { JobSite } from "./types";
 
 chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }, _sender, sendResponse) => {
@@ -48,7 +48,7 @@ chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }, _sender, s
         // });
         console.log('message received')
         const doSomething = async () => {
-            const isValid = await checkValidSite();
+            const isValid = await checkCanSubmit();
             sendResponse({ isValid: isValid });
 
         }
