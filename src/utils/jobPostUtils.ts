@@ -11,7 +11,7 @@ export async function getJobId(): Promise<string | undefined> {
     const jobSite = await getJobSite(activeUrl);
     if (!activeUrl) return undefined;
     if (jobSite == JobSite.LinkedIn) {
-        const postId = activeUrl.match(/currentJobId=([a-zA-Z0-9]*)&/);
+        const postId = activeUrl.match(/currentJobId=([a-zA-Z0-9]*)/);
         if (postId) {
             return "linkedIn-" + postId[1];
         }
@@ -52,12 +52,7 @@ export async function getJobSite(activeUrl: string | undefined): Promise<JobSite
 }
 
 export async function hasPriorSubmission(postId: string): Promise<boolean> {
-    let id = undefined;
-    chrome.identity.getProfileUserInfo((userInfo) => {
-        if (userInfo && !chrome.runtime.lastError) {
-            id = userInfo.id;
-        }
-    });
+    const { id } = await getUserInfo();
     if (id === undefined) {
         return false;
     }
@@ -76,28 +71,35 @@ export async function hasPriorSubmission(postId: string): Promise<boolean> {
 }
 
 export async function addUserSubmission(postId: string): Promise<boolean> {
-    let id = undefined;
-    chrome.identity.getProfileUserInfo((userInfo) => {
-        console.log(userInfo);
+    getUserInfo().then((userInfo) => {
         if (userInfo && !chrome.runtime.lastError) {
-            id = userInfo.id;
+            const id = userInfo.id;
+            if (id === undefined) {
+                return false;
+            }
+            const docRef = doc(db, "UserSubmissions", id);
+            getDoc(docRef).then((docSnap) => {
+                if (docSnap.exists()) {
+                    updateDoc(docRef, { postIds: arrayUnion(postId)});
+                } else {
+                    const newUser = {
+                        postIds: [postId]
+                    }
+                    setDoc(docRef, newUser);
+                }
+
+            })
         }
-    });
-    console.log(id);
-    if (id === undefined) {
-        return false;
-    }
-    const docRef = doc(db, "UserSubmissions", id);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-        updateDoc(docRef, { postIds: arrayUnion(postId)});
-    } else {
-        const newUser = {
-            postIds: [postId]
-        }
-        await setDoc(docRef, newUser);
-    }
+    })
     return true;
+}
+
+function getUserInfo() {
+    return new Promise<chrome.identity.UserInfo>((resolve, _reject) => {
+        chrome.identity.getProfileUserInfo((userInfo) => {
+            resolve(userInfo);
+        });
+    })
 }
 
 export async function checkValidSite() {
