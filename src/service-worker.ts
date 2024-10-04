@@ -1,6 +1,6 @@
 import { doc, updateDoc, increment, arrayUnion, setDoc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
-import { addUserSubmission, checkCanSubmit, getActiveUrl, getJobId, getJobSite, getPostData, } from "./utils/jobPostUtils";
+import { addUserSubmission, checkCanSubmit, getActiveUrl, getJobId, getJobSite, getPostData, updateBadgeText, } from "./utils/jobPostUtils";
 import { JobPostData, JobSite, MessageTypes } from "./types";
 
 chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }, _sender, sendResponse) => {
@@ -64,15 +64,11 @@ chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }, _sender, s
     }
 });
 
-chrome.tabs.onUpdated.addListener((_tabId, changeInfo, _tab) => {
-    const url = changeInfo.url;
-    if (url) {
-        chrome.action.setBadgeText({text: "1"}); 
-        // checkValidSite();
-    }
+chrome.tabs.onUpdated.addListener(() => {
+    updateBadgeText();
 });
 
 chrome.tabs.onActivated.addListener(() => {
-    // checkValidSite();
+    updateBadgeText();
 })
 

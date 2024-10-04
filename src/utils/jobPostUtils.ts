@@ -158,3 +158,20 @@ export async function checkCanSubmit(): Promise<boolean> {
     console.log(jobId);
     return jobId === undefined ? false : !(await hasPriorSubmission(jobId));
 }
+
+export async function updateBadgeText() {
+    const jobId = await getJobId();
+    if (jobId) {
+        const postData = await getPostData(jobId);
+        if (postData) {
+            const notificationCount = postData.fakeListingCount 
+            + postData.shadyCompanyCount;
+            if (notificationCount > 0) {
+                chrome.action.setBadgeText({ text: 
+                    notificationCount.toString() });
+                return;
+            }
+        }
+    }
+    chrome.action.setBadgeText({ text: '' });
+}
