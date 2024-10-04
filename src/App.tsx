@@ -8,35 +8,32 @@ import {
     Route,
 } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { MessageTypes } from "./types";
+import { JobPostData, MessageTypes } from "./types";
 
 function App() {
     const [isValidSite, setIsValidSite] = useState(false);
-
+    const [postData, setPostData] = useState<JobPostData>();
     useEffect(() => {
-        chrome.runtime.sendMessage({ type: MessageTypes.CheckCanSubmit}, (response) => {
+        chrome.runtime.sendMessage({ type: MessageTypes.CheckCanSubmit}, 
+            (response) => {
             console.log(response);
             setIsValidSite(response && response.isValid);
         });
-        // const messageListener = (message: { type: string, disabled: boolean }) => {
-        //     if (message.type === "submit-status") {
-        //         setDisabled(message.disabled);
-        //     }
-        // }
 
-        // chrome.runtime.onMessage.addListener(messageListener);
+        chrome.runtime.sendMessage({ type: MessageTypes.GetPostData}, 
+            (response) => {
+                if (response) {
+                    setPostData(response.postData);
+                }
+        })
 
-        // return () => {
-        //     console.log('unmounted');
-        //     chrome.runtime.onMessage.removeListener(messageListener);
-        // }
     }, []);
     return (
         <MemoryRouter>
             <Routes>
                 <Route path="/" element={<Layout />}>
-                    <Route index element={<Home />} />
-                    <Route path="comments" element={<Comments />} />
+                    <Route index element={<Home postData={postData}/>} />
+                    <Route path="comments" element={<Comments postData={postData}/>} />
                     <Route path="report" element={<ReportForm disabled={!isValidSite}/>} />
                 </Route>
             </Routes>

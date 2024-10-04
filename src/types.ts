@@ -1,17 +1,18 @@
 export enum JobSite {
-    LinkedIn,
-    Indeed,
-    Glassdoor
+    LinkedIn = "LinkedIn",
+    Indeed = "Indeed",
+    Glassdoor = "Glassdoor"
 }
 
 export type JobPostData = {
     comments: string[],
     fakeListingCount: number,
     shadyCompanyCount: number,
-    company: string
+    jobSite: string
 }
 
 export enum MessageTypes {
     SubmitPost = "submit-post",
     CheckCanSubmit = "check-can-submit",
+    GetPostData = "get-post-data"
 }

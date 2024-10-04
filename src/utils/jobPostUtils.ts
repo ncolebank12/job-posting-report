@@ -1,5 +1,5 @@
 import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { JobSite } from "../types";
+import { JobPostData, JobSite } from "../types";
 import { db } from "../firebase";
 
 /**
@@ -124,12 +124,22 @@ export async function addUserSubmission(postId: string): Promise<boolean> {
     return true;
 }
 
+export async function getPostData(postId: string): 
+Promise<JobPostData | undefined> {
+    const docRef = doc(db, "JobPostings", postId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        return docSnap.data() as JobPostData;
+    } else {
+        return undefined;
+    }
+}
 /**
  * gets identity info for loggged in user on chrome
  * @return {Promise<chrome.identity.UserInfo>} a promise containing current
  * chrome user's info (id and email)
  */
-function getUserInfo() {
+function getUserInfo(): Promise<chrome.identity.UserInfo> {
     return new Promise<chrome.identity.UserInfo>((resolve, _reject) => {
         chrome.identity.getProfileUserInfo((userInfo) => {
             resolve(userInfo);

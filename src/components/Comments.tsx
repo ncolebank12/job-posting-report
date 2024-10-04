@@ -1,6 +1,11 @@
-const Comments = () => {
+import { JobPostData } from "../types";
+
+const Comments = ({ postData }: { postData: JobPostData | undefined}) => {
+
     return (
-        <div>Comment 1</div>
+        postData?.comments ? postData.comments.map((comment) => {
+            return <div>{comment}</div>
+        }) : <p>no comments for this listing.</p>
     )
 }
 
