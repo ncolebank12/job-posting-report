@@ -10,3 +10,8 @@ export type JobPostData = {
     shadyCompanyCount: number,
     company: string
 }
+
+export enum MessageTypes {
+    SubmitPost = "submit-post",
+    CheckCanSubmit = "check-can-submit",
+}

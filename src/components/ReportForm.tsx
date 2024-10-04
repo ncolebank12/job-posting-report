@@ -1,4 +1,5 @@
 import { Field, Form, Formik } from "formik";
+import { MessageTypes } from "../types";
 
 const ReportForm = ({ disabled }: { disabled: boolean }) => {
 
@@ -10,7 +11,7 @@ const ReportForm = ({ disabled }: { disabled: boolean }) => {
         }}
         onSubmit={async (values) => {
             const isFakeListing = values.picked === "fakeListing";
-            chrome.runtime.sendMessage({ type: "submit-post", notes: values.comment, isFakeListing: isFakeListing })
+            chrome.runtime.sendMessage({ type: MessageTypes.SubmitPost, notes: values.comment, isFakeListing: isFakeListing })
         }}>
             {() => (
                 <Form>

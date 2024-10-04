@@ -1,10 +1,11 @@
 import { doc, updateDoc, increment, arrayUnion, setDoc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
 import { addUserSubmission, checkCanSubmit, getActiveUrl, getJobId, getJobSite, } from "./utils/jobPostUtils";
-import { JobSite } from "./types";
+import { JobSite, MessageTypes } from "./types";
 
 chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }, _sender, sendResponse) => {
-    if (type === "submit-post") {
+    console.log(type);
+    if (type === MessageTypes.SubmitPost) {
         const submit = async () => {
             const activeUrl = await getActiveUrl();
             const jobSite = await getJobSite(activeUrl);
@@ -42,17 +43,13 @@ chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }, _sender, s
         }
         submit();
     } 
-    else if (type == "check-valid-site") {
-        // checkValidSite().then((isValid) => {
-        //     sendResponse({ isValid: isValid });
-        // });
-        console.log('message received')
-        const doSomething = async () => {
+    else if (type == MessageTypes.CheckCanSubmit) {
+        const checkValidity = async () => {
             const isValid = await checkCanSubmit();
             sendResponse({ isValid: isValid });
 
         }
-        doSomething();
+        checkValidity();
         return true;
     }
 });

@@ -8,12 +8,13 @@ import {
     Route,
 } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { MessageTypes } from "./types";
 
 function App() {
     const [isValidSite, setIsValidSite] = useState(false);
 
     useEffect(() => {
-        chrome.runtime.sendMessage({ type: 'check-valid-site'}, (response) => {
+        chrome.runtime.sendMessage({ type: MessageTypes.CheckCanSubmit}, (response) => {
             console.log(response);
             setIsValidSite(response && response.isValid);
         });
