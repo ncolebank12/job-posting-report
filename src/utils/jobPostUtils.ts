@@ -173,5 +173,5 @@ export async function updateBadgeText() {
             }
         }
     }
-    chrome.action.setBadgeText({ text: '' });
+    chrome.action.setBadgeText({ text: "" });
 }
