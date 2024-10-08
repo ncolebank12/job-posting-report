@@ -147,17 +147,17 @@ function getUserInfo(): Promise<chrome.identity.UserInfo> {
     })
 }
 
-/**
- * checks whether the current user can submit on the current site.
- * Looks at if the job site is valid and if the user has already made a
- * submission for the listing
- * @return {Promise<boolean>} true if user can make a submission, false if not
- */
-export async function checkCanSubmit(): Promise<boolean> {
-    const jobId = await getJobId();
-    console.log(jobId);
-    return jobId === undefined ? false : !(await hasPriorSubmission(jobId));
-}
+// /**
+//  * checks whether the current user can submit on the current site.
+//  * Looks at if the job site is valid and if the user has already made a
+//  * submission for the listing
+//  * @return {Promise<boolean>} true if user can make a submission, false if not
+//  */
+// export async function checkCanSubmit(): Promise<boolean> {
+//     const jobId = await getJobId();
+//     console.log(jobId);
+//     return jobId === undefined ? false : !(await hasPriorSubmission(jobId));
+// }
 
 export async function updateBadgeText() {
     const jobId = await getJobId();

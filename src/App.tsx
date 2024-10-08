@@ -14,7 +14,7 @@ function App() {
     const [isValidSite, setIsValidSite] = useState(false);
     const [postData, setPostData] = useState<JobPostData>();
     useEffect(() => {
-        chrome.runtime.sendMessage({ type: MessageTypes.CheckCanSubmit}, 
+        chrome.runtime.sendMessage({ type: MessageTypes.CheckValidUrl}, 
             (response) => {
             console.log(response);
             setIsValidSite(response && response.isValid);
