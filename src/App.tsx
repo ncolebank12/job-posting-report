@@ -14,27 +14,28 @@ function App() {
     const [isValidSite, setIsValidSite] = useState(false);
     const [postData, setPostData] = useState<JobPostData>();
     useEffect(() => {
-        chrome.runtime.sendMessage({ type: MessageTypes.CheckCanSubmit}, 
+        chrome.runtime.sendMessage({ type: MessageTypes.CheckCanSubmit },
             (response) => {
-            console.log(response);
-            setIsValidSite(response && response.isValid);
-        });
+                console.log(response);
+                setIsValidSite(response && response.isValid);
+            });
 
-        chrome.runtime.sendMessage({ type: MessageTypes.GetPostData}, 
+        chrome.runtime.sendMessage({ type: MessageTypes.GetPostData },
             (response) => {
                 if (response) {
                     setPostData(response.postData);
                 }
-        })
+            })
 
     }, []);
     return (
         <MemoryRouter>
             <Routes>
                 <Route path="/" element={<Layout />}>
-                    <Route index element={<Home postData={postData}/>} />
-                    <Route path="comments" element={<Comments postData={postData}/>} />
-                    <Route path="report" element={<ReportForm disabled={!isValidSite}/>} />
+                    {/* TODO: update isReported */}
+                    <Route index element={<Home postData={postData} isValidSite={isValidSite} isReported={false} />} />
+                    <Route path="comments" element={<Comments postData={postData} />} />
+                    <Route path="report" element={<ReportForm />} />
                 </Route>
             </Routes>
         </MemoryRouter>

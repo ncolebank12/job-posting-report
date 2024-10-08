@@ -2,16 +2,8 @@
     padding: 10px;
 }
 
-.header {
-    font-size: large;
-    font-weight: bold;
-    margin-bottom: 4px;
-}
-
-.viewComments {
-    display: block;
-}
-
-.report {
-    display: block;
+.footer {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
 }

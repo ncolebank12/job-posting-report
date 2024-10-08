@@ -1,16 +1,34 @@
 import styles from "../styles/Home.module.css"
+import common from "../styles/Common.module.css"
 import { Link } from "react-router-dom";
 import { JobPostData } from "../types";
 
-const Home = ({ postData }: { postData: JobPostData | undefined }) => {
-    // const [jobPostData, setJobPostData] = useState<JobPostData>();
-    // setJobPostData(undefined);
+const UserStatMessage = ({ count, message }: { count: number | undefined, message: string }) => {
+    let endMessage = "";
+
+    if (!count) {
+        endMessage = "Loading...";
+    } else if (count === 0) {
+        endMessage = `No users ${message}`;
+    } else if (count === 1) {
+        endMessage = `1 user ${message}`;
+    } else {
+        endMessage = `${count} users ${message}`;
+    }
+
+    return <div>{endMessage}</div>
+}
+
+const Home = ({ postData, isValidSite, isReported }: { postData: JobPostData | undefined, isValidSite: boolean, isReported: boolean }) => {
+    // TODO: update styles for if isValidSite and isReported
     return (
         <div className={styles.container}>
-            <div>{postData?.fakeListingCount} users thought this listing was fake.</div>
-            <div>{postData?.shadyCompanyCount} users felt the company posting this job is shady.</div>
-            <Link className={styles.viewComments} to="/comments">View Comments</Link>
-            <Link className={styles.report} to="/report">Report</Link>
+            <UserStatMessage message="thought this listing was fake." count={postData?.fakeListingCount} />
+            <UserStatMessage message="felt that the company posting this job is shady." count={postData?.shadyCompanyCount} />
+            <div className={styles.footer}>
+                <Link className={common.button} to="/comments">View Comments</Link>
+                <Link className={common.button} to="/report">Report</Link>
+            </div>
         </div >
     )
 }

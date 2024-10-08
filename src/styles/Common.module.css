@@ -1,0 +1,22 @@
+.button {
+    padding: 8px 15px;
+    font-weight: 500;
+    color: #ffffff;
+    background-color: #64748b;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    border-width: 0px;
+}
+
+.button:hover {
+    background-color: #334155;
+}
+
+.separator {
+    background-color: #1e293b;
+    height: 1px;
+    width: 80%;
+    border-radius: 2px;
+}
