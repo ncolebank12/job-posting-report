@@ -1,6 +1,6 @@
 import { doc, updateDoc, increment, arrayUnion, setDoc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
-import { addUserSubmission, checkCanSubmit, getActiveUrl, getJobId, getJobSite, getPostData, updateBadgeText, } from "./utils/jobPostUtils";
+import { addUserSubmission, getActiveUrl, getJobId, getJobSite, getPostData, hasPriorSubmission, updateBadgeText, } from "./utils/jobPostUtils";
 import { JobPostData, JobSite, MessageTypes } from "./types";
 
 chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }, _sender, sendResponse) => {
@@ -42,10 +42,10 @@ chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }, _sender, s
             }
         }
         submit();
-    } else if (type == MessageTypes.CheckCanSubmit) {
+    } else if (type == MessageTypes.CheckValidUrl) {
         const checkValidity = async () => {
-            const isValid = await checkCanSubmit();
-            sendResponse({ isValid: isValid });
+            const jobId = await getJobId();
+            sendResponse({ isValid: jobId !== undefined });
 
         }
         checkValidity();
@@ -60,6 +60,17 @@ chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }, _sender, s
             sendResponse({ postData: data });
         }
         getData();
+        return true;
+    } else if (type == MessageTypes.CheckPriorSubmission) {
+        const checkPrior = async () => {
+            let hasPrior = false;
+            const jobId = await getJobId();
+            if (jobId !== undefined) {
+                hasPrior = await hasPriorSubmission(jobId);
+            }
+            sendResponse({ hasPriorSubmission: hasPrior });
+        }
+        checkPrior();
         return true;
     }
 });

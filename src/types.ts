@@ -13,6 +13,7 @@ export type JobPostData = {
 
 export enum MessageTypes {
     SubmitPost = "submit-post",
-    CheckCanSubmit = "check-can-submit",
+    CheckPriorSubmission = "check-prior-submission",
+    CheckValidUrl = "check-valid-url",
     GetPostData = "get-post-data"
 }
