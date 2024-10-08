@@ -13,11 +13,17 @@ import { JobPostData, MessageTypes } from "./types";
 function App() {
     const [isValidSite, setIsValidSite] = useState(false);
     const [postData, setPostData] = useState<JobPostData>();
+    const [hasPriorSubmission, setHasPriorSubmission] = useState(false);
     useEffect(() => {
         chrome.runtime.sendMessage({ type: MessageTypes.CheckValidUrl}, 
             (response) => {
             console.log(response);
             setIsValidSite(response && response.isValid);
+        });
+
+        chrome.runtime.sendMessage({ type: MessageTypes.CheckPriorSubmission },
+            (response) => {
+                setHasPriorSubmission(response && response.hasPriorSubmission);
         });
 
         chrome.runtime.sendMessage({ type: MessageTypes.GetPostData}, 
