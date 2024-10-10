@@ -2,8 +2,10 @@ import { Field, Form, Formik } from "formik";
 import { MessageTypes } from "../types";
 import common from "../styles/Common.module.css"
 import styles from "../styles/ReportForm.module.css"
+import { useNavigate } from "react-router-dom";
 
 const ReportForm = () => {
+    const navigate = useNavigate();
     return (
         <Formik initialValues={{
             picked: "",
@@ -11,7 +13,9 @@ const ReportForm = () => {
         }}
             onSubmit={async (values) => {
                 const isFakeListing = values.picked === "fakeListing";
-                chrome.runtime.sendMessage({ type: MessageTypes.SubmitPost, notes: values.comment, isFakeListing: isFakeListing })
+                chrome.runtime.sendMessage({ type: MessageTypes.SubmitPost,
+                    notes: values.comment, isFakeListing: isFakeListing });
+                navigate('/success');
             }}>
             {() => (
                 <Form className={styles.container}>

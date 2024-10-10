@@ -39,6 +39,7 @@ chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }, _sender, s
                     await setDoc(docRef, newListing);
                 }
                 await addUserSubmission(jobId);
+                updateBadgeText();
             }
         }
         submit();

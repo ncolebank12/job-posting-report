@@ -4,10 +4,17 @@
     background-color: #cbd5e1;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
+    display: flex;
+
+}
+
+.appIcon {
+    margin: 3px 10px 0px 10px;
 }
 
 .title {
     margin: 0;
+    vertical-align: middle;
 }
 
 .backButton {

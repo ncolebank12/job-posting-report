@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { JobPostData, MessageTypes } from "./types";
+import Success from "./components/Success";
 
 function App() {
     const [isValidSite, setIsValidSite] = useState(false);
@@ -39,9 +40,10 @@ function App() {
             <Routes>
                 <Route path="/" element={<Layout />}>
                     {/* TODO: update isReported */}
-                    <Route index element={<Home postData={postData} isValidSite={isValidSite} isReported={false} />} />
+                    <Route index element={<Home postData={postData} isValidSite={isValidSite} isReported={hasPriorSubmission} />} />
                     <Route path="comments" element={<Comments postData={postData} />} />
                     <Route path="report" element={<ReportForm />} />
+                    <Route path="success" element={<Success />} />
                 </Route>
             </Routes>
         </MemoryRouter>
