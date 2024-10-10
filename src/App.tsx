@@ -39,7 +39,6 @@ function App() {
         <MemoryRouter>
             <Routes>
                 <Route path="/" element={<Layout />}>
-                    {/* TODO: update isReported */}
                     <Route index element={<Home postData={postData} isValidSite={isValidSite} isReported={hasPriorSubmission} />} />
                     <Route path="comments" element={<Comments postData={postData} />} />
                     <Route path="report" element={<ReportForm />} />

@@ -18,7 +18,6 @@ const UserStatMessage = ({ count, message }: { count: number | undefined, messag
 }
 
 const Home = ({ postData, isValidSite, isReported }: { postData: JobPostData | undefined, isValidSite: boolean, isReported: boolean }) => {
-    // TODO: update styles for if isValidSite and isReported
     return (
         isValidSite ? 
         <div className={styles.container}>
