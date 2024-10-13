@@ -19,24 +19,25 @@ const UserStatMessage = ({ count, message }: { count: number | undefined, messag
 
 const Home = ({ postData, isValidSite, isReported }: { postData: JobPostData | undefined, isValidSite: boolean, isReported: boolean }) => {
     return (
-        isValidSite ? 
-        <div className={styles.container}>
+        isValidSite ?
+            <div className={styles.container}>
                 <UserStatMessage message="thought this listing was fake." count={postData?.fakeListingCount} />
                 <UserStatMessage message="felt that the company posting this job is shady." count={postData?.shadyCompanyCount} />
                 <div className={styles.footer}>
                     <Link className={common.button} to="/comments">View Comments</Link>
-                    <Link className={isReported ? common.submitted : common.button} 
-                    to={isReported ? "#" : "/report"}>{isReported ? "Submitted" : "Report" }</Link>
+                    <Link className={isReported ? common.submitted : common.button}
+                        to={isReported ? "#" : "/report"}>{isReported ? "Submitted" : "Report"}</Link>
                 </div>
-                </div >
+            </div >
             :
-        <div className={styles.container}>
-            <p>This URL does not have a valid job listing. <br/>
-            Please note that this extension currently only works for LinkedIn
-            and Indeed.
-            </p>
-        </div>
-        
+            <div className={styles.container}>
+                <p className={styles.messageHead}>This URL does not have a valid job listing.</p>
+                <p>
+                    Please note that this extension currently only works for LinkedIn
+                    and Indeed.
+                </p>
+            </div >
+
 
     )
 }
