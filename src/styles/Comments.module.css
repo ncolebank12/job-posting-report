@@ -1,5 +1,30 @@
+/* TODO: remove hardcoded max widths from comment related selectors, make comments scrollable */
 .container {
     padding: 10px;
     display: flex;
     justify-content: center;
+}
+
+.comment {
+    background-color: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    margin-bottom: 10px;
+    width: 250px;
+}
+
+.commentHeader {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.commentBody {
+    margin-top: 14px;
+    overflow-wrap: break-word;
+    width: 250px;
 }
