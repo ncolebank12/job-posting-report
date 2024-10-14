@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore"
+
 export enum JobSite {
     LinkedIn = "LinkedIn",
     Indeed = "Indeed",
@@ -5,10 +7,15 @@ export enum JobSite {
 }
 
 export type JobPostData = {
-    comments: string[],
+    comments: Comment[],
     fakeListingCount: number,
     shadyCompanyCount: number,
     jobSite: string
+}
+
+export type Comment = {
+    body: string,
+    timestamp: Timestamp
 }
 
 export enum MessageTypes {

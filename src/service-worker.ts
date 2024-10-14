@@ -1,7 +1,7 @@
-import { doc, updateDoc, increment, arrayUnion, setDoc, getDoc } from "firebase/firestore";
+import { doc, updateDoc, increment, arrayUnion, setDoc, getDoc, Timestamp } from "firebase/firestore";
 import { db } from "./firebase";
 import { addUserSubmission, getActiveUrl, getJobId, getJobSite, getPostData, hasPriorSubmission, updateBadgeText, } from "./utils/jobPostUtils";
-import { JobPostData, JobSite, MessageTypes } from "./types";
+import { Comment, JobPostData, JobSite, MessageTypes } from "./types";
 
 chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }, _sender, sendResponse) => {
     console.log(type);
@@ -13,29 +13,38 @@ chrome.runtime.onMessage.addListener(({ type, isFakeListing, notes }, _sender, s
             if (jobId && jobSite !== undefined) {
                 const docRef = doc(db, "JobPostings", jobId);
                 const docSnap = await getDoc(docRef)
+
                 if (docSnap.exists()) {
                     if (isFakeListing) {
-                        await updateDoc(docRef, { fakeListingCount: increment(1)});
+                        await updateDoc(docRef, { fakeListingCount: increment(1) });
                     } else {
-                        await updateDoc(docRef, { shadyCompanyCount: increment(1)});
+                        await updateDoc(docRef, { shadyCompanyCount: increment(1) });
                     }
-                    
+
                     if (notes.length > 0) {
-                        await updateDoc(docRef, { comments: arrayUnion(notes)});
+                        const newComment: Comment = {
+                            body: notes,
+                            timestamp: new Timestamp(Date.now() / 1000, 0)
+                        }
+                        await updateDoc(docRef, { comments: arrayUnion(newComment) });
                     }
                 } else { //initialize new listing
                     const newListing = {
                         fakeListingCount: isFakeListing ? 1 : 0,
                         shadyCompanyCount: isFakeListing ? 0 : 1,
-                        comments: [] as string[],
+                        comments: [],
                         jobSite: JobSite[jobSite],
                     } as JobPostData
                     if (notes && notes.length > 0) {
-                        newListing.comments.push(notes);
+                        const newComment: Comment = {
+                            body: notes,
+                            timestamp: new Timestamp(Date.now() / 1000, 0)
+                        }
+                        newListing.comments.push(newComment);
                     }
                     const docRef = doc(db, "JobPostings", jobId);
                     console.log(docRef);
-                    
+
                     await setDoc(docRef, newListing);
                 }
                 await addUserSubmission(jobId);
