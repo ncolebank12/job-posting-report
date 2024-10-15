@@ -20,6 +20,12 @@ export async function getJobId(): Promise<string | undefined> {
         const postId = activeUrl.match(/currentJobId=([a-zA-Z0-9]*)/);
         if (postId) {
             return "linkedIn-" + postId[1];
+        } else {
+            //when opening a job post on separate tab
+            const viewId = activeUrl.match(/jobs\/view\/([a-zA-Z0-9]*)/);
+            if (viewId) {
+                return "linkedIn-" + viewId[1];
+            }
         }
     } else if (jobSite == JobSite.Indeed) {
         const postId = activeUrl.match(/vjk=([a-zA-Z0-9]*)/)
